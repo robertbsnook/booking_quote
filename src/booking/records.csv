@@ -1,0 +1,5 @@
+customer_name,destination,package_desc,dangerous,delivery_date,weight,length,width,height
+Joe,c,toys,n,2021/06/19,8,3,3,3
+Henry,o,bottles,n,2021/06/20,7,2,2,2
+Anna,c,postits,n,2021/06/10,2,1,1,1
+Sally,country,pencils,n,2021/07/01,1,1,1,2
