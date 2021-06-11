@@ -65,9 +65,8 @@ def size_check(length,width,height):
     else:
         return True
 
-def urgent_check():
-    due = input("When do they want the package to arrive: yyyy/dd/mm ")
-    year, month, day = map(int, due.split('/'))
+def urgent_check(delivery_date):
+    year, month, day = map(int, delivery_date.split('/'))
     date = datetime.date(year, month, day)
     future = datetime.date.today() + datetime.timedelta(days=3)
     if date > future:
@@ -96,20 +95,28 @@ def danger_check():
     else:
         print("Is it safe or unsafe? (y/n)")
 
+def next_customer():
+    next = input("Is there another customer: (y/n)")
+    if next == 'y':
+        return True
+    else:
+        return False
 
 def main():
-    while True:
+    customer = True
+    while customer == True:
         customer_name = input("Please enter customer name: ")
         destination = destination_check()
         package_desc = input("General description of package: ")
         dangerous = danger_check()
-        urgency = urgent_check()
+        delivery_date = input("When do they want the package to arrive: yyyy/dd/mm ")
+        urgency = urgent_check(delivery_date)
         weight = input("Weight in kilograms: ")
         length = input("L: ")
         width = input("W: ")
-        height = input ("H: ")
-    df = pd.read_csv('records.csv', index_col = 0)
-    new_row = {f'customer_name': customer_name,
+        height = input("H: ")
+        df = pd.read_csv('records.csv', index_col= 0)
+        new_row = {'customer_name': customer_name,
                'destination': destination,
                'package_desc': package_desc,
                'dangerous': dangerous,
@@ -119,10 +126,12 @@ def main():
                'length': length,
                'width': width,
                'height': height}
-    df = df.append(new_row,ignore_index=True)
-    df.to_csv('records.csv', index=False)
-    entry = (customer_name,destination,package_desc,dangerous,delivery_date,weight,length,width,height)
-    print(entry)
+        df = df.append(new_row,ignore_index=True)
+        df.to_csv('records.csv', index=True)
+        print(new_row)
+
+        print(df.last_valid_index())
+        customer = next_customer()
 
 
 
