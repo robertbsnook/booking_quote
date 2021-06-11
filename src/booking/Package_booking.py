@@ -8,12 +8,18 @@ from IPython.display import display
 from tabulate import tabulate
 from datetime import date,datetime as dt,timedelta
 
-
-class air:
-    def __init__(self,destination,dangerous,urgency):
+class travel_route:
+    def __init__(self,destination,dangerous,urgency,length,width,height,weight):
         self.destination = destination
         self.dangerous = dangerous
         self.urgency = urgency
+        self.length = length
+        self.width = width
+        self.height = height
+
+class air(travel_route):
+    def __init__(self):
+        super().init__()
 
     def travel_check(self):
         if self.dangerous == "unsafe":
@@ -21,29 +27,27 @@ class air:
         elif self.urgency == 'urgent':
             return True
 
-    def air_charge(self,length,width,height,weight):
+    def charge(self,length,width,height,weight):
         if weight*10 > length*width*height*20:
             return weight*10
         else:
             return length*width*height*20
 
-class truck:
-    def __init__(self,destination,urgency):
-        self.destination = destination
-        self.urgency = urgency
+class truck(travel_route):
+    def __init__(self):
+        super().__init__()
 
-    def travel_check(self,length,width,height,weight):
+    def travel_check(self):
         if self.destination == 'overseas':
             return False
         else:
             return True
 
-    def truck_charge(self):
+    def charge(self):
         if self.urgency == 'urgent':
             return 45
         else:
             return 25
-
 
 
 def weight_check(weight):
@@ -61,8 +65,8 @@ def size_check(length,width,height):
     else:
         return True
 
-def urgent_check(delivery_date):
-    due = input("When package is due:")
+def urgent_check():
+    due = input("When do they want the package to arrive: yyyy/dd/mm ")
     year, month, day = map(int, due.split('/'))
     date = datetime.date(year, month, day)
     future = datetime.date.today() + datetime.timedelta(days=3)
@@ -72,35 +76,40 @@ def urgent_check(delivery_date):
         return "urgent"
 
 
+def destination_check():
+    dest = input("Is this package remaining in (c)ountry, or (o)verseas: ")
+    # use Try and except to handle wrong letter input.
+    if dest == 'c':
+        return 'country'
+    elif dest == 'o':
+        return 'overseas'
+    else:
+        print("Use 'c' or 'o'.")
+
+def danger_check():
+    danger = input("Does the package contain anything dangerous (y/n): ")
+    # use Try and except to handle wrong letter input.
+    if danger == 'n':
+        return 'Safe'
+    elif danger == 'y':
+        return 'unsafe'
+    else:
+        print("Is it safe or unsafe? (y/n)")
+
 
 def main():
     while True:
         customer_name = input("Please enter customer name: ")
-        dest = input("Is this package remaining in (c)ountry, or (o)verseas: ")
-# use Try and except to handle wrong letter input.
-        if dest == 'c':
-            destination = 'country'
-        elif dest == 'o':
-            destination = 'overseas'
-        else:
-            print("Use 'c' or 'o'.")
+        destination = destination_check()
         package_desc = input("General description of package: ")
-        danger = input("Does the package contain anything dangerous (y/n): ")
-    # use Try and except to handle wrong letter input.
-        if danger == 'n':
-            dangerous = 'Safe'
-        elif danger == 'y':
-            dangerous = 'unsafe'
-        else:
-            print("Is it safe or unsafe? (y/n)")
-        delivery_date = input("When do they want the package to arrive: yyyy/dd/mm ")
-        urgency = urgent_check(delivery_date)
+        dangerous = danger_check()
+        urgency = urgent_check()
         weight = input("Weight in kilograms: ")
         length = input("L: ")
         width = input("W: ")
         height = input ("H: ")
-    df = pd.read_csv('records.csv')
-    new_row = {'customer_name': customer_name,
+    df = pd.read_csv('records.csv', index_col = 0)
+    new_row = {f'customer_name': customer_name,
                'destination': destination,
                'package_desc': package_desc,
                'dangerous': dangerous,
