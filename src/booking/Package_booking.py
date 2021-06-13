@@ -2,10 +2,9 @@
 import datetime
 import pysnooper
 import pandas as pd
-import csv
-from IPython.display import display
 from tabulate import tabulate
 from datetime import date,datetime as dt,timedelta
+
 
 class TravelRoute:
     def __init__(self,destination,dangerous,urgency,length,width,height,weight):
@@ -17,19 +16,21 @@ class TravelRoute:
         self.height = height
         self.weight = weight
 
-@pysnooper.snoop()
-class Air(TravelRoute):
-    def __init__(self):
-        super().__init__()
+    def __str__(self,):
+        return self.
 
-    @pysnooper.snoop()
-    def travel_check(self):
+
+class Air(TravelRoute):
+    def __init__(self,destination,dangerous,urgency,length,width,height,weight):
+        super().__init__(destination,dangerous,urgency,length,width,height,weight)
+
+    def travel_check(self,):
         if self.dangerous == "unsafe":
             return False
         else:
             return True
 
-    @pysnooper.snoop()
+
     def charge(self):
         if self.weight*10 > self.length*self.width*self.height*20:
             return float(self.weight*10)
@@ -38,17 +39,17 @@ class Air(TravelRoute):
 
 
 class Truck(TravelRoute):
-    def __init__(self):
-        super().__init__()
+    def __init__(self,destination,dangerous,urgency,length,width,height,weight):
+        super().__init__(destination,dangerous,urgency,length,width,height,weight)
 
-    @staticmethod
+
     def travel_check(self):
         if self.destination == 'overseas':
             return False
         else:
             return True
 
-    @staticmethod
+
     def charge(self):
         if self.urgency == 'urgent':
             return 45
@@ -57,8 +58,8 @@ class Truck(TravelRoute):
 
 
 class Boat(TravelRoute):
-    def __init__(self):
-        super().__init__()
+    def __init__(self,destination,dangerous,urgency,length,width,height,weight):
+        super().__init__(destination,dangerous,urgency,length,width,height,weight)
 
     def travel_check(self):
         if self.destination == 'c':
@@ -103,7 +104,7 @@ def destination_check():
     dest = input("Is this package remaining in (c)ountry, or (o)verseas: ").lower()
     # use Try and except to handle wrong letter input.
     if dest == 'c':
-        return 'country'
+        return 'in-country'
     elif dest == 'o':
         return 'overseas'
     else:
@@ -128,7 +129,7 @@ def next_customer():
     else:
         return False
 
-@pysnooper.snoop()
+
 def main():
     customer = True
     while customer:
@@ -161,16 +162,18 @@ def main():
         print(tabulate(row,tablefmt='psql'))
 
         options = {}
-        air_option = Air()
+        air_option = Air(destination,dangerous,urgency,length,width,height,weight)
 
-        print(air_option.travel_check())
-        print(Air.charge())
+        air_option = air_option.travel_check
+        print(air_option)
+        print(str(air_option))
+        print(Air.charge)
         if Air.travel_check is True:
-            options.update({'Option': 'A','Flight cost': Air.charge()})
+            options.update({'Option': 'A','Flight cost': Air.charge})
         if Truck.travel_check is True:
-            options.update({'Option': 'B','Truck cost': Truck.charge()})
+            options.update({'Option': 'B','Truck cost': Truck.charge})
         if Boat.travel_check is True:
-            options.update({'Option': 'C','Boat cost': Boat.charge()})
+            options.update({'Option': 'C','Boat cost': Boat.charge})
 
         print(options)
 
