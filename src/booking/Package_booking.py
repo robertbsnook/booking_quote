@@ -133,14 +133,12 @@ def delivery_options(destination, dangerous, urgency, length, width, height, wei
     delivery_choice = int(input("Choose the delivery method:"))
     df2_option = df2.at[delivery_choice,'Option']
     df2_cost = df2.at[delivery_choice,'Cost']
-    give_values(df2_option,df2_cost)
-
-def give_values(option,cost):
-    return option,cost
+    return df2_option,df2_cost
 
 
 
-@pysnooper.snoop()
+
+
 def main():
     customer = True
     while customer:
@@ -168,19 +166,20 @@ def main():
                'Width': width,
                'Height': height}
         df = df.append(new_row,ignore_index=True)
-        df.to_csv('booking_quotes.csv', index=True)
+        #df.to_csv('booking_quotes.csv', index=True)
         row = df.tail(1).transpose()
         print(tabulate(row,tablefmt='psql'))
         print("Order ID:",df.last_valid_index())
-        option = give_values[0]
-        cost = give_values[1]
-        df.at[df.last_valid_index(),'Shipping_option'] = option
-        df.at[df.last_valid_index(), 'Cost'] = cost
 
-        df = df.append(new_row,ignore_index=True)
+        d_option,d_cost = delivery_options(destination, dangerous, urgency, length, width, height, weight)
+        print(d_option)
+        print(type(d_option))
+        print(d_cost)
+        print(type(d_cost))
+        df.at[df.last_valid_index(), 'Shipping_option'] = d_option
+        df.at[df.last_valid_index(), 'Cost'] = d_cost
         df.to_csv('booking_quotes.csv', index=True)
 
-# select option and have it append to the customer line
         customer = next_customer()
 
 
