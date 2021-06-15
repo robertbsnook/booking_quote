@@ -51,7 +51,7 @@ class Boat(TravelRoute):
         super().__init__(destination,dangerous,urgency,length,width,height,weight)
 
     def charge(self):
-        if self.destination == 'c':
+        if self.destination == 'in-country':
             return 0
         elif self.urgency == 'urgent':
             return 0
@@ -130,8 +130,17 @@ def delivery_options(destination, dangerous, urgency, length, width, height, wei
     print(tabulate(df2, tablefmt='psql'))
 
 
+    delivery_choice = int(input("Choose the delivery method:"))
+    df2_option = df2.at[delivery_choice,'Option']
+    df2_cost = df2.at[delivery_choice,'Cost']
+    give_values(df2_option,df2_cost)
+
+def give_values(option,cost):
+    return option,cost
 
 
+
+@pysnooper.snoop()
 def main():
     customer = True
     while customer:
@@ -162,12 +171,16 @@ def main():
         df.to_csv('booking_quotes.csv', index=True)
         row = df.tail(1).transpose()
         print(tabulate(row,tablefmt='psql'))
-        delivery_options(destination, dangerous, urgency, length, width, height, weight)
+        print("Order ID:",df.last_valid_index())
+        option = give_values[0]
+        cost = give_values[1]
+        df.at[df.last_valid_index(),'Shipping_option'] = option
+        df.at[df.last_valid_index(), 'Cost'] = cost
 
+        df = df.append(new_row,ignore_index=True)
+        df.to_csv('booking_quotes.csv', index=True)
 
 # select option and have it append to the customer line
-
-        print("Order ID:",df.last_valid_index())
         customer = next_customer()
 
 
