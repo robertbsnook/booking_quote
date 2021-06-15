@@ -136,7 +136,10 @@ def delivery_options(destination, dangerous, urgency, length, width, height, wei
     return df2_option,df2_cost
 
 
-
+def print_customer(df):
+    row = df.tail(1).transpose()
+    print("Order ID:",df.last_valid_index())
+    print(tabulate(row,tablefmt='psql'))
 
 
 def main():
@@ -166,20 +169,13 @@ def main():
                'Width': width,
                'Height': height}
         df = df.append(new_row,ignore_index=True)
-        #df.to_csv('booking_quotes.csv', index=True)
-        row = df.tail(1).transpose()
-        print(tabulate(row,tablefmt='psql'))
-        print("Order ID:",df.last_valid_index())
+        print_customer(df)
 
         d_option,d_cost = delivery_options(destination, dangerous, urgency, length, width, height, weight)
-        print(d_option)
-        print(type(d_option))
-        print(d_cost)
-        print(type(d_cost))
         df.at[df.last_valid_index(), 'Shipping_option'] = d_option
         df.at[df.last_valid_index(), 'Cost'] = d_cost
         df.to_csv('booking_quotes.csv', index=True)
-
+        print_customer(df)
         customer = next_customer()
 
 
