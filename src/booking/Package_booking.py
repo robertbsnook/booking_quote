@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import datetime
-import pysnooper
 import pandas as pd
 from tabulate import tabulate
 
@@ -173,7 +172,6 @@ def get_delivery_date():
     return d_date
 
 
-@pysnooper.snoop()
 def get_dimensions():
     print("Minimum dimension size is 0.1 meter.  Anything smaller should be rounded up to 0.1.\n"
           "Minimum overall size is 0.5m")
@@ -182,7 +180,7 @@ def get_dimensions():
             length = float(input("L: "))
             if not length:
                 raise ValueError("Please enter a length.")
-            elif length <0.1:
+            elif length < 0.1:
                 print("Please enter a dimension greater than 0.0999.")
             else:
                 break
@@ -193,7 +191,7 @@ def get_dimensions():
             width = float(input("W: "))
             if not width:
                 raise ValueError("Please enter a width.")
-            elif width <0.1:
+            elif width < 0.1:
                 print("Please enter a dimension greater than 0.0999.")
             else:
                 break
@@ -204,7 +202,7 @@ def get_dimensions():
             height = float(input("H: "))
             if not height:
                 raise ValueError("Please enter a height.")
-            elif height <0.1:
+            elif height < 0.1:
                 print("Please enter a dimension greater than 0.0999.")
             else:
                 break
@@ -232,7 +230,7 @@ def get_weight():
             weight = float(input("How many kilograms does it weigh: "))
             if not weight:
                 raise ValueError("Please enter a weight.  Cannot be blank")
-            elif weight <=0:
+            elif weight <= 0:
                 print("Please enter a positive weight.")
             else:
                 break
@@ -268,7 +266,7 @@ def main():
                 'Destination': destination,
                 'Package_desc': package_desc,
                 'Dangerous': dangerous,
-                'Delivery_date': delivery_date,
+                'Delivery_date': delivery_date.date(),
                 'Urgency': urgency,
                 'Weight': weight,
                 'Size': round(dimension,2),
