@@ -3,7 +3,6 @@ import datetime
 import pysnooper
 import pandas as pd
 from tabulate import tabulate
-from datetime import date,datetime as dt,timedelta
 
 
 class TravelRoute:
@@ -77,7 +76,7 @@ def size_check(length,width,height):
 
 
 def urgent_check(delivery_date):
-    year, month, day = map(int, delivery_date.split('/'))
+    year, month, day = map(int, delivery_date.datetime.split('/'))
     date = datetime.date(year, month, day)
     future = datetime.date.today() + datetime.timedelta(days=3)
     if date > future:
@@ -87,25 +86,26 @@ def urgent_check(delivery_date):
 
 
 def destination_check():
-    dest = input("Is this package remaining in (c)ountry, or (o)verseas: ").lower()
-    # use Try and except to handle wrong letter input.
-    if dest == 'c':
-        return 'in-country'
-    elif dest == 'o':
-        return 'overseas'
-    else:
-        print("Use 'c' or 'o'.")
+    while True:
+        dest = input("Is this package remaining in (c)ountry, or (o)verseas: ").lower()
+        if dest == 'c':
+            return 'in-country'
+        elif dest == 'o':
+            return 'overseas'
+        else:
+            print("Use 'c' or 'o'.")
 
 
 def danger_check():
-    danger = input("Does the package contain anything dangerous (y/n): ").lower()
-    # use Try and except to handle wrong letter input.
-    if danger == 'n':
-        return 'Safe'
-    elif danger == 'y':
-        return 'unsafe'
-    else:
-        print("Is it safe or unsafe? (y/n)").lower()
+    while True:
+        danger = input("Does the package contain anything dangerous (y/n): ").lower()
+        # use Try and except to handle wrong letter input.
+        if danger == 'n':
+            return 'Safe'
+        elif danger == 'y':
+            return 'unsafe'
+        else:
+            print("Is it safe or unsafe? (y/n)")
 
 
 def next_customer():
@@ -128,8 +128,6 @@ def delivery_options(destination, dangerous, urgency, length, width, height, wei
         options['Boat'] = boat_option.charge()
     df2 = pd.DataFrame(list(options.items()), columns=['Option', 'Cost'])
     print(tabulate(df2, tablefmt='psql'))
-
-
     delivery_choice = int(input("Choose the delivery method:"))
     df2_option = df2.at[delivery_choice,'Option']
     df2_cost = df2.at[delivery_choice,'Cost']
@@ -142,19 +140,70 @@ def print_customer(df):
     print(tabulate(row,tablefmt='psql'))
 
 
+def get_name():
+    while True:
+        try:
+            name = input("Please enter customer name: ")
+            if not name:
+                raise ValueError("Please enter a valid name.  Cannot be blank")
+            else:
+                break
+        except ValueError as e:
+            print(e)
+    return name
+
+def get_description():
+    while True:
+        try:
+            description = input("General description of package: ")
+            if not description:
+                raise ValueError("Please enter a description.  Cannot be blank")
+            else:
+                break
+        except ValueError as e:
+            print(e)
+    return description
+
+def get_delivery_date():
+    day = 0
+    while day == 0:
+        d_date = input("When do they want the package to arrive: yyyy/dd/mm ")
+        try:
+            d_date = datetime.datetime.strptime(d_date, '%Y/%m/%d')
+            if d_date <= datetime.datetime.today():
+                print("Please enter a delivery date at least one day in advance.")
+            else:
+                day = 1
+        except ValueError:
+            raise ValueError("Incorrect date format, should be YYY/MM/DD.")
+    return d_date
+
+
 def main():
     customer = True
     while customer:
-        customer_name = input("Please enter customer name: ")
+        customer_name = get_name()
         destination = destination_check()
-        package_desc = input("General description of package: ")
+        package_desc = get_description()
         dangerous = danger_check()
-        delivery_date = input("When do they want the package to arrive: yyyy/dd/mm ")
+        delivery_date = get_delivery_date()
         urgency = urgent_check(delivery_date)
-        weight = input("Weight in kilograms: ")
-        length = input("L: ")
-        width = input("W: ")
-        height = input("H: ")
+        try:
+            weight = input("Weight in kilograms: ")
+        except ValueError:
+            print("Please input a proper weight. ")
+        try:
+            length = input("L: ")
+        except ValueError:
+            print("Please input a proper length. ")
+        try:
+            width = input("W: ")
+        except ValueError:
+            print("Please input a proper width. ")
+        try:
+            height = input("H: ")
+        except ValueError:
+            print("Please input a proper height. ")
         df = pd.read_csv('booking_quotes.csv', index_col= 0)
         df.index.name = 'ID'
         df = df.reset_index(drop=True)
@@ -177,8 +226,6 @@ def main():
         df.to_csv('booking_quotes.csv', index=True)
         print_customer(df)
         customer = next_customer()
-
-
 
 
 
