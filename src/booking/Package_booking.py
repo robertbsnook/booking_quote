@@ -173,7 +173,8 @@ def get_delivery_date():
 
 
 def get_dimensions():
-    print("Minimum dimension size is 0.1 meter.  Anything smaller should be rounded up to 0.1.\n"
+    print("Minimum dimension size is 0.1 meter.\n  "
+          "Anything smaller should be rounded up to 0.1.\n"
           "Minimum overall size is 0.5m")
     while True:
         try:
@@ -274,7 +275,6 @@ def main():
                 'Cost': ''}
         df = df.append(new_row, ignore_index=True)
         print_customer(df)
-
         d_option, d_cost = delivery_options(destination, dangerous, urgency, dimension, weight)
         df.at[df.last_valid_index(), 'Shipping_option'] = d_option
         df.at[df.last_valid_index(), 'Cost'] = d_cost
